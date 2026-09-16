@@ -1,7 +1,7 @@
 {
   "name": "dockerized-quartz",
-  "version": "1.0.0",
-  "description": "[Quartz (v4)](https://github.com/jackyzha0/quartz) is a lightweight static site generator that helps you host your digital garden. This project provides automated dockerized solution to build and serve Quartz sites with minimal configuration.",
+  "version": "1.1.0",
+  "description": "Builds and serves an Obsidian vault as a Quartz v4 site, and rebuilds it when the notes change.",
   "main": "server.js",
   "directories": {
     "doc": "docs"
@@ -10,8 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Miša Miljković",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.21.2"
   }
