@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM --platform=$TARGETPLATFORM debian:bookworm-slim
 
 WORKDIR /usr/src/app
 
