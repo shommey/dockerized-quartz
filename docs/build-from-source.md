@@ -21,7 +21,7 @@
             # Use your custom Quartz repo or leave blank for the default Quartz repo
             # GIT_REPO: "https://github.com/yourusername/your-quartz-site.git"
             # Optional: specify a branch to checkout
-            # GIT_BRANCH: "v4"
+            # GIT_BRANCH: "v4"   # upstream default is v5, set this to stay on v4
             # Optional: Update delay after which quartz build will trigger, default 300 seconds
             BUILD_UPDATE_DELAY: 900
             # Optional: Auto rebuild Quartz after change in Obsidian Vault 

@@ -1,22 +1,43 @@
 # Dockerized Quartz
 
-[Quartz (v4)](https://github.com/jackyzha0/quartz) is a lightweight static site generator that helps you host your digital garden with minimal setup. This project provides an automated, Dockerized solution to build and serve Quartz sites effortlessly. Simply mount your Obsidian Vault as a Docker volume, and Quartz will handle the rest!
+[Quartz](https://github.com/jackyzha0/quartz) is a static site generator for publishing
+an Obsidian vault as a website. This project runs it in Docker: mount your vault, and the
+container builds the site and serves it with NGINX, rebuilding when the notes change.
 
 ## Features
 
-- 🚀 **Minimal Configuration**: Simply plug in your existing Obsidian Vault as a Docker bind volume.
+- Mount an existing Obsidian vault as a bind volume. Nothing else is required to get a site.
+- Rebuilds on its own after a set delay when notes in the vault change.
+- Rebuild on demand with a POST to a secret URL, for a cron job or a git hook.
+- Notifications on build start, success and failure, through Apprise.
+- Uses the upstream Quartz repo by default, or your own fork with your config and theme.
+- Works with private repositories, so your Quartz config can stay private.
+- Served by NGINX, with a config you can replace.
 
-- 🔄 **Automated Builds**: Rebuilds automatically after a set delay when notes in your Docker volume change.
+## Requirements and versions
 
-- 🔗 **Webhook Trigger**: Trigger builds by sending a POST request to a secret URL.
+- Images are published for `linux/amd64` and `linux/arm64`.
+- The image ships Node 24. Quartz needs Node 22 or newer. Build with
+  `--build-arg NODE_MAJOR=22` if you need the older line.
+- Tags on Docker Hub are `latest`, the full version such as `1.1.0`, and the
+  `major.minor` alias such as `1.1`. Pin one of the version tags if you would
+  rather not move when a new release lands.
 
-- 📢 **Notifications**: Get notified on build start, success, or failure.
+### Which Quartz version you get
 
-- 📦 **Default or Custom Quartz Repository**: If none present, container will clone [the Quartz repo](https://github.com/jackyzha0/quartz) on startup or you can provide your own customized Quartz.
+With no `GIT_REPO` set, the container clones the upstream Quartz repository and uses its
+default branch. Upstream has moved that default to **Quartz v5**, so a fresh container now
+builds a v5 site.
 
-- 🔒 **Support for Private Repositories**: Keep your Quartz config private.
+To stay on v4, set the branch:
 
-- 🌐 **NGINX Web Server**: Served with NGINX, with basic configuration that can be extended.
+```yaml
+environment:
+  GIT_BRANCH: "v4"
+```
+
+That works with the default repository and with your own. If the branch does not exist the
+container stops with an error rather than quietly building something else.
 
 ## Quick Start
 
@@ -32,7 +53,7 @@ To quickly get started with Quartz in Docker create `docker-compose.yml` file:
           # Optional: your own Quartz repo, leave it out for the default one
           # GIT_REPO: "https://github.com/yourusername/your-quartz-site.git"
           # Optional: branch to check out
-          # GIT_BRANCH: "v4"
+          # GIT_BRANCH: "v4"   # upstream default is v5, set this to stay on v4
           # Optional: seconds to wait after a vault change before rebuilding
           BUILD_UPDATE_DELAY: 300
           # Optional: rebuild when the vault changes, default true
@@ -72,8 +93,8 @@ For more detailed setups [see docs](docs/index.md).
 
 This project builds upon and integrates several open-source projects:  
 
-- [**Quartz v4**](https://github.com/jackyzha0/quartz) – The core static site generator that powers this project.  
+- [**Quartz**](https://github.com/jackyzha0/quartz) – The core static site generator that powers this project.  
 - [**Apprise**](https://github.com/caronc/apprise) – Handles notifications for build status updates.  
 - [**NGINX**](https://www.nginx.com/) – Serves the generated Quartz site with a configurable web server.  
 
-A huge thanks to the maintainers of these projects for their amazing work! 🚀
+Thanks to the maintainers of these projects.

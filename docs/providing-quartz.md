@@ -4,7 +4,7 @@ This container supports three methods for providing your Quartz instance. You ca
 
 ### 1. Auto-Pull of the Default Quartz Repository
 
-By default, if no specific repository is provided, the container will automatically pull the main [Quartz repository](https://github.com/jackyzha0/quartz.git) on startup. This option is ideal for quickly deploying a base Quartz setup. However, since the repository is not stored in a persistent volume, you will not be able to customize the Quartz files.
+By default, if no specific repository is provided, the container will automatically pull the main [Quartz repository](https://github.com/jackyzha0/quartz.git) on startup and use its default branch. Upstream has moved that default to Quartz v5, so a fresh container builds a v5 site. Set `GIT_BRANCH=v4` to stay on v4. This option is ideal for quickly deploying a base Quartz setup. However, since the repository is not stored in a persistent volume, you will not be able to customize the Quartz files.
 
 ### 2. Pulling a Custom Repository
 
@@ -20,6 +20,13 @@ If you already have a Quartz setup on your host, you can bring it into the conta
 Alternatively, you can set the `GIT_REPO` environment variable to pull the repository into a mounted volume during the first run. Once the Quartz repository is inside the volume, you are responsible for maintaining and updating it manually as needed.
 
 The path of Quartz in container is `/usr/src/app/quartz`.
+
+An existing checkout always wins. If that path already has content, whether from a bind
+mount or a volume that survived a restart, the container keeps it and ignores `GIT_REPO`.
+It says so in the log. To pull a different repository, empty that directory first.
+
+`GIT_BRANCH` is applied when the repository is cloned. If the branch does not exist the
+container stops instead of building the default branch.
 
 ### 3.1 Pulling from private Github repo
 

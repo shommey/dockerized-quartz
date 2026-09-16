@@ -1,6 +1,6 @@
 # Dockerized Quartz
 
-[Quartz (v4)](https://github.com/jackyzha0/quartz) is a lightweight static site generator that helps you host your digital garden. This project provides automated dockerized solution to build and serve Quartz sites with minimal configuration.
+[Quartz](https://github.com/jackyzha0/quartz) is a static site generator for publishing an Obsidian vault as a website. This project runs it in Docker: mount your vault, and the container builds the site and serves it with NGINX.
 
 ## Features
 
