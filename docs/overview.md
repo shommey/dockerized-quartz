@@ -20,13 +20,14 @@ By default, if no volumes provided, container will clone default Quartz repo and
 2. **`build-quartz.sh`**  
     A simple script that runs `npx quartz build`.
     - It looks for the Obsidian vault at `$VAULT_DIR`, which defaults to `/vault`.
-    - It stops with an error if that directory does not exist, rather than building an empty site.
+    - It stops with an error if that directory does not exist. An existing but empty one is fine,
+      it builds an empty site and says so in the log.
     - It outputs build files into `/usr/share/nginx/html`
 
 3. **`watch-and-build-quartz.sh`**  
    This script triggers a rebuild of the Quartz site:
    
-   - Watches for changes in the vault files.
+   - Watches the vault for changes, including subfolders, and folders added later.
    - When notes are updated, the script waits for a set delay to ensure no more edits are happening, then runs the `build-quartz.sh`.
 
 4. **`server.js`**

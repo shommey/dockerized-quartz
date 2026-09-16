@@ -44,10 +44,11 @@ schedule_build() {
     BUILD_SCHEDULED_PID=$!
 }
 
-# Watch the directory for changes
-echo "Watching $WATCH_DIR for changes..."
+# Watch the directory for changes. -r covers subfolders, which is how most
+# vaults are laid out, and it picks up folders added later on its own.
+echo "Watching $WATCH_DIR for changes, including subfolders..."
 
-inotifywait -m -e modify,move,create,delete --exclude '.*\.swp$' --format '%w%f' "$WATCH_DIR" | \
+inotifywait -m -r -e modify,move,create,delete --exclude '.*\.swp$' --format '%w%f' "$WATCH_DIR" | \
 while read file; do
     if [[ "$file" =~ \.md$ && "$file" != *"Untitled.md"* ]]; then
         LAST_CHANGE=$(date +%s)
