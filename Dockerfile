@@ -1,11 +1,17 @@
-FROM --platform=$TARGETPLATFORM debian:bookworm-slim
+# Node 22 is the minimum Quartz requires. 24 is the current LTS and is the
+# default here; build with --build-arg NODE_MAJOR=22 to pin the older line.
+ARG NODE_MAJOR=24
+
+FROM debian:bookworm-slim
+
+ARG NODE_MAJOR
 
 WORKDIR /usr/src/app
 
 # Install Node.js, Nginx, git, and inotify-tools
 RUN apt-get update && \
     apt-get install -y curl apprise gnupg2 ca-certificates lsb-release inotify-tools nginx git apache2-utils && \
-    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    curl -fsSL https://deb.nodesource.com/setup_${NODE_MAJOR}.x | bash - && \
     apt-get install -y nodejs
 
 COPY /scripts /usr/src/app/scripts
