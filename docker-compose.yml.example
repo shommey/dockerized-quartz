@@ -1,21 +1,24 @@
-version: '3.8'
-
 services:
   quartz:
-    image: shommey/dockerized-quartz
+    image: shommey/dockerized-quartz:latest
     container_name: quartz-notes
     environment:
-      # Use your custom Quartz repo or leave blank for the default Quartz repo
+      # Use your custom Quartz repo or leave it out for the default Quartz repo
       # GIT_REPO: "https://github.com/yourusername/your-quartz-site.git"
       # Optional: specify a branch to checkout
       # GIT_BRANCH: "v4"
+      # Optional: seconds to wait after a vault change before rebuilding, default 300
+      BUILD_UPDATE_DELAY: 300
+      # Optional: rebuild automatically when the vault changes, default true
+      AUTO_REBUILD: "true"
     volumes:
-      # Mount your Obsidian vault for Quartz to read and build the notes from
-      # - /path/on/host:/vault:ro
-      # Mount existing quartz
-      # - /path/on/host:/usr/src/app/quartz
-      # Optional: Persist logs if needed
-      # - /path/on/host:/var/log/nginx
+      # Mount your Obsidian vault for Quartz to read and build the notes from.
+      # Without it the container serves the bundled docs as an example vault.
+      - ./vault:/vault:ro
+      # Optional: mount an existing Quartz checkout to keep it between restarts
+      # - ./quartz:/usr/src/app/quartz
+      # Optional: persist nginx logs
+      # - ./logs:/var/log/nginx
     ports:
       # Map any port on the host to port 80 in the container for web access
       - "80:80"

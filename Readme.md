@@ -24,40 +24,30 @@ To quickly get started with Quartz in Docker create `docker-compose.yml` file:
 
 1. **Edit compose file**:
     ```yaml
-    version: '3.8'
     services:
-        quartz:
-            image: shommey/dockerized-quartz
-            container_name: quartz-notes
-            environment:
-            # Use your custom Quartz repo or leave blank for the default Quartz repo
-            # GIT_REPO: "https://github.com/yourusername/your-quartz-site.git"
-            
-            # Optional: specify a branch to checkout
-            # GIT_BRANCH: "v4"
-            
-            # Optional: Update delay after which quartz build will trigger, default 300 seconds
-            BUILD_UPDATE_DELAY: 120
-
-            # Optional: Auto rebuild Quartz after change in Obsidian Vault 
-            AUTO_REBUILD: true
-            volumes:
-            # Mount your Obsidian vault for Quartz to read and build the site from
-            # If not set it will mount docs
-            # - /path/on/host:/vault:ro
-            #
-            # Optional: Mount existing Quartz repo
-            # - /path/on/host:/usr/src/app/quartz
-            #
-            # Optional: Persist nginx logs if needed
-            # - /path/to/nginx/logs:/var/log/nginx
-            #
-            # Optional: Mount nginx conf
-            # - /path/on/host:/etc/nginx
-            ports:
-            # Map any port on the host to port 80 in the container for web access
-            - "80:80"
-            restart: unless-stopped
+      quartz:
+        image: shommey/dockerized-quartz:latest
+        container_name: quartz-notes
+        environment:
+          # Optional: your own Quartz repo, leave it out for the default one
+          # GIT_REPO: "https://github.com/yourusername/your-quartz-site.git"
+          # Optional: branch to check out
+          # GIT_BRANCH: "v4"
+          # Optional: seconds to wait after a vault change before rebuilding
+          BUILD_UPDATE_DELAY: 300
+          # Optional: rebuild when the vault changes, default true
+          AUTO_REBUILD: "true"
+        volumes:
+          # Your Obsidian vault. Without it the container serves the
+          # bundled docs so you can see it working.
+          - ./vault:/vault:ro
+          # Optional: keep the Quartz checkout between restarts
+          # - ./quartz:/usr/src/app/quartz
+          # Optional: persist nginx logs
+          # - ./logs:/var/log/nginx
+        ports:
+          - "80:80"
+        restart: unless-stopped
     ```
 2. **Run it**: \
     `docker compose up -d` in the directory. \
