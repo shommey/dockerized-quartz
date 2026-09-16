@@ -16,6 +16,12 @@ if [ ! -d "$VAULT_DIR" ]; then
   exit 1
 fi
 
+# Not an error. A vault mounted empty is a normal starting point, and notes
+# added later trigger a rebuild on their own.
+if [ -z "$(find "$VAULT_DIR" -name '*.md' -print -quit 2>/dev/null)" ]; then
+  echo "No markdown files in '$VAULT_DIR' yet. The site will be empty until you add some."
+fi
+
 if [ "$VAULT_DO_GIT_PULL_ON_UPDATE" = true ]; then
   echo "Executing git pull in $VAULT_DIR"
   cd "$VAULT_DIR" && git pull || echo "Warning: git pull in '$VAULT_DIR' failed. Building the vault as it stands."

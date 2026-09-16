@@ -37,8 +37,8 @@ environment:
   VAULT_DIR: "/usr/src/app/quartz/content"
 ```
 
-The check happens after the clone, so a path inside the checkout is fine. Note that the upstream
-Quartz `.gitignore` excludes `content`, so make sure your notes are actually committed.
+The check happens after the clone, so a path inside the checkout is fine. Upstream Quartz ships
+`content` empty, so make sure your own notes are committed there and not just sitting on your disk.
 
 Also keep in mind that an existing Quartz checkout wins over `GIT_REPO`, see
 [Providing Quartz](providing-quartz.md). If you mounted a volume at `/usr/src/app/quartz` and it
