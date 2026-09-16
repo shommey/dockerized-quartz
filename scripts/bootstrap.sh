@@ -22,7 +22,7 @@ if [ -z "$GIT_REPO" ]; then
   echo "No custom Quartz repository provided. Using default: $DEFAULT_REPO"
   REPO=$DEFAULT_REPO
 else
-  echo "Cloning custom Quartz repository: $GIT_REPO"
+  echo "Custom Quartz repository requested: $GIT_REPO"
   REPO=$GIT_REPO
 fi
 
@@ -32,6 +32,10 @@ git config --global --add safe.directory /vault
 # Check if the quartz directory is already present and not empty
 if [ -d "$QUARTZ_DIR" ] && [ "$(ls -A $QUARTZ_DIR)" ]; then
   echo "Quartz directory already exists. Skipping pull..."
+  if [ -n "$GIT_REPO" ]; then
+    echo "Note: GIT_REPO is set but $QUARTZ_DIR already has content, so it is not used."
+    echo "      Empty that directory, or the volume mounted there, to clone it again."
+  fi
 else
   echo "Cloning the Quartz repository into $QUARTZ_DIR..."
   git clone $REPO $QUARTZ_DIR
@@ -39,7 +43,7 @@ else
   # Check if there's a custom branch to checkout
   if [ -n "$GIT_BRANCH" ]; then
     echo "Checking out custom branch: $GIT_BRANCH"
-    cd $QUARTZ_DIR && git checkout $GIT_BRANCH
+    cd $QUARTZ_DIR && git checkout $GIT_BRANCH || handle_error "Could not check out branch '$GIT_BRANCH'. Check the name, or leave GIT_BRANCH unset to use the repository's default branch."
   fi
 fi
 
@@ -47,8 +51,6 @@ fi
 echo "Installing npm dependencies..."
 cd $QUARTZ_DIR
 npm install || handle_error "npm install failed. Check your Node.js version or package.json dependencies."
-
-npm audit fix
 
 /usr/src/app/scripts/build-quartz.sh
 
