@@ -11,6 +11,39 @@ The recommended way to provide the Obsidian vault to the container is by using a
 **Note**
 When possible use the `:ro` (read-only) flag to prevent unintentional modifications to the vault from within the container.
 
+## Using a Different Path with `VAULT_DIR`
+
+`VAULT_DIR` sets the directory Quartz builds from. It defaults to `/vault`, so if you mount your
+vault there you never need to set it.
+
+Set it when the notes live somewhere else in the container:
+
+```sh
+-e VAULT_DIR=/notes -v /path/on/host:/notes:ro
+```
+
+If the directory does not exist, the container stops at startup with an error instead of building
+an empty site.
+
+### Notes That Live in Your Own Quartz Repo
+
+Quartz keeps its notes in the `content` folder of the repository. If you set `GIT_REPO` to your own
+Quartz repo and committed your notes to it, point `VAULT_DIR` at that folder and skip the vault
+mount entirely:
+
+```yaml
+environment:
+  GIT_REPO: "https://github.com/yourusername/your-quartz-site.git"
+  VAULT_DIR: "/usr/src/app/quartz/content"
+```
+
+The check happens after the clone, so a path inside the checkout is fine. Note that the upstream
+Quartz `.gitignore` excludes `content`, so make sure your notes are actually committed.
+
+Also keep in mind that an existing Quartz checkout wins over `GIT_REPO`, see
+[Providing Quartz](providing-quartz.md). If you mounted a volume at `/usr/src/app/quartz` and it
+already has content, a changed `GIT_REPO` is ignored and so are the notes in it.
+
 ## Updating the Vault
 
 There are two main methods to update the vault contents: **External Updates** and **Git-based Updates**.
@@ -48,7 +81,8 @@ If your Obsidian vault is hosted in a Git repository (e.g., **GitHub**), follow 
    - **Cron job**: Schedule periodic updates
    - **Webhook**: Trigger rebuilds on repository changes
 
-Before rebuilding, the container will execute a `git pull` inside `/vault` to fetch the latest changes.
+Before rebuilding, the container will execute a `git pull` inside the vault directory to fetch the
+latest changes. That is `/vault` unless you set `VAULT_DIR`, in which case it is that directory.
 
 **Note**:
 When using Git-based updates volume **needs** read-write permissions to execute `git pull`. Mount volume with `/path/on/host/git_vault:/vault` without the `:ro` flag.

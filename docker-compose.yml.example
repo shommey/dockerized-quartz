@@ -8,6 +8,10 @@ services:
       # Optional: specify a branch to checkout
       # Upstream default branch is Quartz v5. Set this to stay on v4.
       # GIT_BRANCH: "v4"
+      # Optional: where the notes are in the container, default /vault
+      # Set it to /usr/src/app/quartz/content to build the notes in your own Quartz repo
+      # and drop the vault mount below
+      # VAULT_DIR: "/usr/src/app/quartz/content"
       # Optional: seconds to wait after a vault change before rebuilding, default 300
       BUILD_UPDATE_DELAY: 300
       # Optional: rebuild automatically when the vault changes, default true

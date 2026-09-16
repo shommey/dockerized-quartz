@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Directory where the Obsidian notes are located
-WATCH_DIR="/vault"
+WATCH_DIR=${VAULT_DIR:-/vault}
 
 BUILD_SCRIPT="/usr/src/app/scripts/build-quartz.sh"
 
@@ -45,7 +45,9 @@ schedule_build() {
 }
 
 # Watch the directory for changes
-inotifywait -m -e modify,move,create,delete --exclude '.*\.swp$' --format '%w%f' $WATCH_DIR | \
+echo "Watching $WATCH_DIR for changes..."
+
+inotifywait -m -e modify,move,create,delete --exclude '.*\.swp$' --format '%w%f' "$WATCH_DIR" | \
 while read file; do
     if [[ "$file" =~ \.md$ && "$file" != *"Untitled.md"* ]]; then
         LAST_CHANGE=$(date +%s)

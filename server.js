@@ -12,7 +12,7 @@ app.post("/rebuild/:secret", (req, res) => {
         return res.status(403).json({ error: "Forbidden" });
     }
 
-    exec("./scripts/build-quartz.sh", (error, stdout, stderr) => {
+    exec("/usr/src/app/scripts/build-quartz.sh", (error, stdout, stderr) => {
         if (error) {
             console.error(`Webhook failed with error: ${stderr}`);
             return res.status(500).json({ error: "Script execution failed" });

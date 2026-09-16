@@ -11,6 +11,7 @@ container builds the site and serves it with NGINX, rebuilding when the notes ch
 - Rebuild on demand with a POST to a secret URL, for a cron job or a git hook.
 - Notifications on build start, success and failure, through Apprise.
 - Uses the upstream Quartz repo by default, or your own fork with your config and theme.
+- Builds the notes committed in your own Quartz repo, if that is where you keep them.
 - Works with private repositories, so your Quartz config can stay private.
 - Served by NGINX, with a config you can replace.
 
@@ -54,6 +55,9 @@ To quickly get started with Quartz in Docker create `docker-compose.yml` file:
           # GIT_REPO: "https://github.com/yourusername/your-quartz-site.git"
           # Optional: branch to check out
           # GIT_BRANCH: "v4"   # upstream default is v5, set this to stay on v4
+          # Optional: where the notes are in the container, default /vault.
+          # Point it at your repo's content folder to publish the notes in it.
+          # VAULT_DIR: "/usr/src/app/quartz/content"
           # Optional: seconds to wait after a vault change before rebuilding
           BUILD_UPDATE_DELAY: 300
           # Optional: rebuild when the vault changes, default true

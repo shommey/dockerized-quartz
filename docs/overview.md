@@ -19,7 +19,8 @@ By default, if no volumes provided, container will clone default Quartz repo and
 
 2. **`build-quartz.sh`**  
     A simple script that runs `npx quartz build`.
-    - It looks for Obsidian vault at `/vault` path in container.
+    - It looks for the Obsidian vault at `$VAULT_DIR`, which defaults to `/vault`.
+    - It stops with an error if that directory does not exist, rather than building an empty site.
     - It outputs build files into `/usr/share/nginx/html`
 
 3. **`watch-and-build-quartz.sh`**  
@@ -34,8 +35,11 @@ By default, if no volumes provided, container will clone default Quartz repo and
 ### Paths in the Container
 
 - **Obsidian Vault**:  
-  Each time `build-quartz.sh` runs, it instructs Quartz to look in the `/vault` directory for content.  
-  When mounting, make sure to use the root directory of your Obsidian vault and mount it to `/vault`.
+  Each time `build-quartz.sh` runs, it instructs Quartz to look in `$VAULT_DIR` for content, which
+  defaults to `/vault`.  
+  When mounting, make sure to use the root directory of your Obsidian vault and mount it to `/vault`.  
+  Set `VAULT_DIR` if the notes live somewhere else in the container, for example in the `content`
+  folder of your own Quartz repo. See [Importing Obsidian Vault](importing-vault.md).
 
 - **Quartz Directory**:  
   The Quartz repository is cloned into `/usr/src/app/quartz`.  
@@ -76,7 +80,13 @@ By default, if no volumes provided, container will clone default Quartz repo and
   Triggers on build start, success or fail.
 
 - **`VAULT_DO_GIT_PULL_ON_UPDATE`**
-  Execute git pull in /vault directory before rebuild
+  Execute git pull in the vault directory before rebuild
   Usefull when storing vault in git repository
   Do initial pull before setting this and make sure container can access the repo
   default false
+
+- **`VAULT_DIR`**
+  Where the notes are inside the container. Defaults to `/vault`, which is the mount point
+  everything else in the docs uses. Point it at `/usr/src/app/quartz/content` to build the
+  notes that came with your own Quartz repo. If the directory does not exist the container
+  stops with an error.

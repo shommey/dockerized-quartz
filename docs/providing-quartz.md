@@ -13,6 +13,12 @@ To use your own custom Quartz repository, simply set the `GIT_REPO` environment 
 **Environment Variable**:
 - `GIT_REPO=<your-custom-repo-url>`
 
+The repository provides Quartz itself: the config, the layout and the theme. The notes still come
+from the vault directory, which is `/vault` by default, so a custom repo on its own does not change
+what gets published. If the notes you want are committed in the repo, in the usual Quartz `content`
+folder, set `VAULT_DIR=/usr/src/app/quartz/content` and drop the vault mount. See
+[Importing Obsidian Vault](importing-vault.md).
+
 ### 3. Bring Your Own Quartz (BYOQ)
 
 If you already have a Quartz setup on your host, you can bring it into the container using a bind mount. This allows you to persist and fully control your Quartz files outside of the container.
@@ -26,7 +32,8 @@ mount or a volume that survived a restart, the container keeps it and ignores `G
 It says so in the log. To pull a different repository, empty that directory first.
 
 `GIT_BRANCH` is applied when the repository is cloned. If the branch does not exist the
-container stops instead of building the default branch.
+container stops instead of building the default branch. A clone that fails stops the container
+too, rather than carrying on with nothing to build.
 
 ### 3.1 Pulling from private Github repo
 

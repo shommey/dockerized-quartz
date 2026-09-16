@@ -2,6 +2,8 @@
 
 DEFAULT_REPO="https://github.com/jackyzha0/quartz.git"
 QUARTZ_DIR="/usr/src/app/quartz"
+VAULT_DIR=${VAULT_DIR:-/vault}
+export VAULT_DIR
 AUTO_REBUILD=${AUTO_REBUILD:-true}
 
 handle_error() {
@@ -27,7 +29,7 @@ else
 fi
 
 git config --global --add safe.directory /usr/src/app/quartz
-git config --global --add safe.directory /vault
+git config --global --add safe.directory "$VAULT_DIR"
 
 # Check if the quartz directory is already present and not empty
 if [ -d "$QUARTZ_DIR" ] && [ "$(ls -A $QUARTZ_DIR)" ]; then
@@ -38,7 +40,7 @@ if [ -d "$QUARTZ_DIR" ] && [ "$(ls -A $QUARTZ_DIR)" ]; then
   fi
 else
   echo "Cloning the Quartz repository into $QUARTZ_DIR..."
-  git clone $REPO $QUARTZ_DIR
+  git clone $REPO $QUARTZ_DIR || handle_error "Could not clone '$REPO'. Check the URL and, for a private repository, the credentials in it."
 
   # Check if there's a custom branch to checkout
   if [ -n "$GIT_BRANCH" ]; then
@@ -46,6 +48,14 @@ else
     cd $QUARTZ_DIR && git checkout $GIT_BRANCH || handle_error "Could not check out branch '$GIT_BRANCH'. Check the name, or leave GIT_BRANCH unset to use the repository's default branch."
   fi
 fi
+
+# The vault can live inside the Quartz checkout, so this is only checkable
+# after the clone above.
+if [ ! -d "$VAULT_DIR" ]; then
+  handle_error "Vault directory '$VAULT_DIR' does not exist. Mount your vault there, or set VAULT_DIR to a directory that exists in the container."
+fi
+
+echo "Using vault directory: $VAULT_DIR"
 
 # Install dependencies for Quartz
 echo "Installing npm dependencies..."
